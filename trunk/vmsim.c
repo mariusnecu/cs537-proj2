@@ -15,8 +15,8 @@
 unsigned long parseNext(FILE* fp);
 
 int main(int argc, char *argv[]) {
+	
     // Open the file.
-	// vimsim tlbtest tracefile pagesize tblsize
 	int store, i, j;
 	int pageSize, tlbSize;
 	char* end;
@@ -35,6 +35,11 @@ int main(int argc, char *argv[]) {
 	
 	while ((store = fgetc(fp)) != EOF)
 	{
+		// Check for eof
+		if (store == 'o')
+		{
+			break;
+		}
 		if (store == '\n')
 		{
 			arr[i] = store;
@@ -70,6 +75,22 @@ int main(int argc, char *argv[]) {
 			address = (unsigned long) trace_address & 0xffffffff;
 			printf("Address added: %lx\n", address);
 			
+			// Null out character arrays.
+			int k = 0;
+			while (k < 20)
+			{
+				first[k] = '\0';
+				second[k] = '\0';
+				k++;
+			}
+			
+			int y = 0;
+			while (y < 33)
+			{
+				arr[y] = '\0';
+				y++;
+			}
+			
 			free(cpy);
 			i = 0;
 		}
@@ -78,5 +99,6 @@ int main(int argc, char *argv[]) {
 			i++;
 		}
 	}
+
     return 0;
 }
