@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tlbtest.h"
+#include "vmsim.h"
 #include "wsstest.h"
 #include "pttest.h"
 #include "prtest.h"
@@ -17,6 +18,7 @@ int main(int argc, char *argv[]) {
     // Open the file.
 	// vimsim tlbtest tracefile pagesize tblsize
 	int store, i, j;
+	int pageSize, tlbSize;
 	char* end;
 	char arr[33];
 	char first[20];
@@ -25,7 +27,12 @@ int main(int argc, char *argv[]) {
 	unsigned long address;
 	
 	FILE *fp = fopen(argv[2], "r");
-
+	pageSize = atoi(argv[3]);
+	tlbSize = atoi(argv[4]);
+	
+	// Create the tlb.
+	struct TLB* tlb = createTLB(tlbSize, pageSize);
+	
 	while ((store = fgetc(fp)) != EOF)
 	{
 		if (store == '\n')
