@@ -12,19 +12,21 @@
 #include "prtest.h"
 #include <string.h>
 
-unsigned long parseNext(FILE* fp);
-
 int main(int argc, char *argv[]) {
 	
     // Open the file.
 	int store, i, j;
+	int rollingMiss = 0;
 	int pageSize, tlbSize;
 	char* end;
 	char arr[33];
 	char first[20];
 	char second[20];
+	char* rw;
+	struct VPN* vpn;
 	unsigned long long trace_address;
 	unsigned long address;
+	
 	
 	FILE *fp = fopen(argv[2], "r");
 	pageSize = atoi(argv[3]);
@@ -48,7 +50,7 @@ int main(int argc, char *argv[]) {
 			// Pad unneeded with spaces to easily tokenize.
 			while (arr[j] != '\n')
 			{
-				if (arr[j] == ':' || arr[j] == 'W' || arr[j] == 'R')
+				if (arr[j] == ':')
 				{
 					arr[j] = 0x20;
 				}
@@ -62,18 +64,29 @@ int main(int argc, char *argv[]) {
 			char* tok = strtok(cpy, "\t ");
 			strcpy(first, tok);
 			
+			// R or W
+			tok = strtok(NULL, "\t ");
+			rw = (char *)malloc(sizeof(tok));
+			strcpy(rw, tok);
+			
 			// Second address.
 			tok = strtok(NULL, "\t ");
 			strcpy(second, tok);
 			
+			vpn = (struct VPN*)malloc(sizeof(struct VPN));
+			
 			// Convert to 32bit.
 			trace_address = strtoq(first, &end, 16);
 			address = (unsigned long) trace_address & 0xffffffff;
+			vpn->number = address;
+			insert(tlb, vpn, &rollingMiss);
 			printf("Address added: %lx\n", address);
 			
 			trace_address = strtoq(second, &end, 16);
 			address = (unsigned long) trace_address & 0xffffffff;
 			printf("Address added: %lx\n", address);
+		
+			printf("Read/Write: %s\n", rw);
 			
 			// Null out character arrays.
 			int k = 0;
@@ -91,6 +104,7 @@ int main(int argc, char *argv[]) {
 				y++;
 			}
 			
+			free(rw);
 			free(cpy);
 			i = 0;
 		}
@@ -100,5 +114,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	printf("\nTotal TLB misses: %d\n", rollingMiss);
     return 0;
 }
