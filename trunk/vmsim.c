@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	unsigned long long trace_address;
 	unsigned long address;
 	
-	
+	char* testChoice = argv[1];
 	FILE *fp = fopen(argv[2], "r");
 	pageSize = atoi(argv[3]);
 	tlbSize = atoi(argv[4]);
@@ -70,7 +70,8 @@ int main(int argc, char *argv[]) {
 			{
 				rw = (char *)malloc(sizeof(tok));
 				strcpy(rw, tok);
-				} else break;
+			} 
+			else break;
 			
 			// Second address.
 			tok = strtok(NULL, "\t ");
@@ -79,6 +80,8 @@ int main(int argc, char *argv[]) {
 				strcpy(second, tok);
 			}
 			else break;
+			
+			// VPN to be inserted.
 			vpn = createVPN();
 			
 			// Convert to 32bit.
@@ -93,7 +96,7 @@ int main(int argc, char *argv[]) {
 			vpn->number = address;
 			insert(tlb, vpn, &rollingMiss);
 			printf("Address added: %lx\n", address);
-		
+			
 			printf("Read/Write: %s\n", rw);
 			
 			// Null out character arrays.
@@ -122,7 +125,11 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	printf("\nTotal TLB misses: %d\n", rollingMiss);
 	// Count number of entries in evicted and in tlb.
+	printf("\nTLB misses: %d\n", rollingMiss);
+	
+	int totalUnique = countUnique(tlb);
+	printf("VPNs: %d\n", totalUnique);
+	
     return 0;
 }

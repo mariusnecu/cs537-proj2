@@ -5,6 +5,7 @@ struct TLB
 	int size;
 	int pageSize;
 	struct VPN** arr;
+	struct evictList* eList;
 };
 
 struct VPN
@@ -13,15 +14,28 @@ struct VPN
 	int hits;
 };
 
+struct evictList
+{
+	int size;
+	struct VPN** arr;
+};
+
+// Prototypes
 struct TLB* createTLB(int size, int pageSize);
 void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss);
 struct VPN* createVPN();
+struct evictList* createEvictList(int initSize);
+struct evictList* add(struct evictList* eList, struct VPN* vpn);
+int inEvictList(struct evictList* eList, struct VPN* vpn);
+void removeFromEvictList(struct evictList* eList, struct VPN* vpn);
+//-----------
 
 struct TLB* createTLB(int size, int pageSize)
 {
 	int i;
 	struct VPN* vpn;
 	struct TLB* ptr = (struct TLB*)malloc(sizeof(struct TLB));
+	ptr->eList = createEvictList(size);
 	ptr->arr = (struct VPN**)malloc(size * sizeof(struct VPN));
 	
 	for (i = 0; i<size; i++)
@@ -84,9 +98,169 @@ void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 		}
 		if (slotFound == 0)
 		{
-			// Page replacement algorithm here.
+			if (inEvictList(tlb->eList, vpn) == 0)
+			{
+				// Page replacement (TLB full); VPN not in evict list.
+				int lowestSeen = tlb->arr[0]->number;
+				int index = 0;
+				for (j = 0; j<tlb->size; j++)
+				{
+					if (tlb->arr[j]->number < lowestSeen)
+					{
+						index = j;
+						lowestSeen = tlb->arr[j]->number;
+					}
+				}
+			
+				// Add evicted VPN to evicted list here.
+				tlb->eList = add(tlb->eList, tlb->arr[index]);
+				// ---------------------------------
+			
+				tlb->arr[index]->number = vpn->number;
+				tlb->arr[index]->hits = 0;
+			}
+			else {
+				// The VPN was seen already in the past (in evict list)
+				int lowestSeen = tlb->arr[0]->number;
+				int index = 0;
+				for (j = 0; j<tlb->size; j++)
+				{
+					if (tlb->arr[j]->hits < lowestSeen)
+					{
+						index = j;
+						lowestSeen = tlb->arr[j]->number;
+					}
+				}
+			
+				// Remove from the evicted list and add it back to the TLB.
+				removeFromEvictList(tlb->eList, vpn);
+				
+				// Add evicted to the Evict List now.
+				add(tlb->eList, tlb->arr[index]);
+				// ---------------------------------
+			
+				tlb->arr[index]->number = vpn->number;
+				tlb->arr[index]->hits = 0;
+			}
 			
 		}
 		*rollingMiss = *rollingMiss + 1;
 	}
+}
+
+struct evictList* createEvictList(int initSize)
+{
+	struct evictList* eList = (struct evictList*)malloc(sizeof(struct evictList));
+	eList->arr = (struct VPN**)malloc(initSize * sizeof(struct VPN));
+	eList->size = initSize;
+	
+	int j;
+	for (j = 0; j<initSize; j++)
+	{
+		eList->arr[j] = createVPN();
+	}
+	
+	return eList;
+}
+
+int inEvictList(struct evictList* eList, struct VPN* vpn)
+{
+	int j;
+	for (j = 0; j<eList->size; j++)
+	{
+		if (eList->arr[j]->number == vpn->number)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void removeFromEvictList(struct evictList* eList, struct VPN* vpn)
+{
+	int j;
+	for (j = 0; j<eList->size; j++)
+	{
+		if(eList->arr[j]->number == vpn->number)
+		{
+			// Remove it.
+			eList->arr[j]->number = 0;
+			return;
+		}
+	}
+}
+
+struct evictList* add(struct evictList* eList, struct VPN* vpn)
+{
+	int j;
+	int copyFound = 0;
+	int insertSuccessful = 0;
+	
+	for (j = 0; j<eList->size; j++)
+	{
+		// First scan list for a copy of the vpn.
+		if (eList->arr[j]->number == vpn->number)
+		{
+			// Already present, do nothing.
+			copyFound = 1;
+			break;
+		}
+	}
+	if (copyFound == 0)
+	{
+		// Find an open space to insert the VPN.
+		for (j = 0; j<eList->size; j++)
+		{
+			if (eList->arr[j]->number == 0)
+			{
+				// Open slot found, insert VPN.
+				eList->arr[j]->number = vpn->number;
+				insertSuccessful = 1;
+				break;
+			}
+		}
+		
+		if (insertSuccessful == 0)
+		{
+			// The list is full; resize, copy and insert.
+			struct evictList* cpy = createEvictList((eList->size)*10);
+			
+			for (j = 0; j<eList->size; j++)
+			{
+				cpy->arr[j]->number = eList->arr[j]->number;
+				free(eList->arr[j]);
+			}
+			
+			// Finally insert the VPN into the newly resized evictList.
+			cpy->arr[eList->size+1]->number = vpn->number;
+			free(eList);
+			return cpy;
+		}
+	}
+	return eList;
+}
+
+int countUnique(struct TLB* tlb)
+{
+	int j, count;
+	
+	// Count in TLB first.
+	for (j = 0; j<tlb->size; j++)
+	{
+		if (tlb->arr[j]->number != 0)
+		{
+			count++;
+		}
+	}
+	
+	// Count evictList.
+	for (j = 0; j<tlb->eList->size; j++)
+	{
+		if (tlb->eList->arr[j] != 0)
+		{
+			count++;
+		}
+	}
+	
+	return count;
 }
