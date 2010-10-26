@@ -1,5 +1,12 @@
 #import <math.h>
 
+typedef struct _mem_loc {
+    unsigned int address;
+    struct mem_loc *next;
+} mem_loc;
+
+mem_loc *trace_head;
+
 struct TLB
 {
 	int size;
