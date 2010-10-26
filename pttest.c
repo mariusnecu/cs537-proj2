@@ -11,7 +11,7 @@
 #include "pttest.h"
 
 // Example trace for testing.
-int trace[] = {
+unsigned int trace[] = {
     0xcca00fbd,
     0xccc1bba0,
     0xcca00fbc,

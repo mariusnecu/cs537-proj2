@@ -13,7 +13,7 @@
 #include <string.h>
 
 int main(int argc, char *argv[]) {
-	
+
     // Open the file.
 	int store, i, j;
 	int rollingMiss = 0;
