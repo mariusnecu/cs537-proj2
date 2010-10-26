@@ -4,7 +4,7 @@ struct TLB
 {
 	int size;
 	int pageSize;
-	struct VPN* arr[];
+	struct VPN** arr;
 };
 
 struct VPN
@@ -15,23 +15,32 @@ struct VPN
 
 struct TLB* createTLB(int size, int pageSize);
 void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss);
+struct VPN* createVPN();
 
 struct TLB* createTLB(int size, int pageSize)
 {
+	int i;
+	struct VPN* vpn;
 	struct TLB* ptr = (struct TLB*)malloc(sizeof(struct TLB));
+	ptr->arr = (struct VPN**)malloc(size * sizeof(struct VPN));
+	
+	for (i = 0; i<size; i++)
+	{
+		ptr->arr[i] = createVPN();
+	}
 	ptr->size = size;
 	ptr->pageSize = pageSize;
 	
-	int i;
-	for (i = 0; i<size; i++)
-	{
-		struct VPN* vpn = (struct VPN*)malloc(sizeof(struct VPN));
-		vpn->number = 0;
-		vpn->hits = 0;
-		ptr->arr[i] = vpn;
-	}
-	
 	return ptr;
+}
+
+struct VPN* createVPN()
+{
+	struct VPN* vpn = (struct VPN*)malloc(sizeof(struct VPN));
+	vpn->number = 0;
+	vpn->hits = 0;
+	
+	return vpn;
 }
 
 // This function will do all of the heavy lifting for the TLB.
@@ -44,12 +53,12 @@ void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 	int checkHit, slotFound;
 	
 	// virtNum is the number of bits to be masked with vpn->num.
-/*	unsigned long virtNum = logl(2^(tlb->pageSize))/logl(2);
-	unsigned long mask = vpn->number & virtNum;*/
+	unsigned long offset = logl(tlb->pageSize)/logl(2);
+	unsigned long vpnSize = 32-offset;
 	
 	for (j = 0; j<tlb->size; j++)
 	{
-		if (tlb->arr[j] != 0)
+		if (tlb->arr[j]->number != 0)
 		{
 			if (tlb->arr[j]->number == vpn->number)
 			{
@@ -67,8 +76,8 @@ void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 		{
 			if (tlb->arr[j]->number == 0)
 			{
-				free(tlb->arr[j]);
-				tlb->arr[j] = vpn;
+				// Unused slot, insert the VPN.
+				tlb->arr[j]->number = vpn->number;
 				slotFound = 1;
 				break;
 			}

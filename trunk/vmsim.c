@@ -66,14 +66,20 @@ int main(int argc, char *argv[]) {
 			
 			// R or W
 			tok = strtok(NULL, "\t ");
-			rw = (char *)malloc(sizeof(tok));
-			strcpy(rw, tok);
+			if (tok != NULL)
+			{
+				rw = (char *)malloc(sizeof(tok));
+				strcpy(rw, tok);
+				} else break;
 			
 			// Second address.
 			tok = strtok(NULL, "\t ");
-			strcpy(second, tok);
-			
-			vpn = (struct VPN*)malloc(sizeof(struct VPN));
+			if (tok != NULL)
+			{
+				strcpy(second, tok);
+			}
+			else break;
+			vpn = createVPN();
 			
 			// Convert to 32bit.
 			trace_address = strtoq(first, &end, 16);
@@ -84,6 +90,8 @@ int main(int argc, char *argv[]) {
 			
 			trace_address = strtoq(second, &end, 16);
 			address = (unsigned long) trace_address & 0xffffffff;
+			vpn->number = address;
+			insert(tlb, vpn, &rollingMiss);
 			printf("Address added: %lx\n", address);
 		
 			printf("Read/Write: %s\n", rw);
@@ -115,5 +123,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	printf("\nTotal TLB misses: %d\n", rollingMiss);
+	// Count number of entries in evicted and in tlb.
     return 0;
 }
