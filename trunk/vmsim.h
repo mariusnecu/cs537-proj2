@@ -256,7 +256,7 @@ int countUnique(struct TLB* tlb)
 	// Count evictList.
 	for (j = 0; j<tlb->eList->size; j++)
 	{
-		if (tlb->eList->arr[j] != 0)
+		if (tlb->eList->arr[j]->number != 0)
 		{
 			count++;
 		}
