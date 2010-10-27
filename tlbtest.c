@@ -24,17 +24,13 @@ void tlbtest(FILE* fp, int tlbSize, int pageSize)
 		address = (int) instAddr & 0xffffffff;
 		vpn->number = address;
 		insertIntoTLB(tlb, vpn, &rollingMiss);
-		printf("Address added: %lx\n", address);
 			
 		address = (int) dataAddr & 0xffffffff;
 		vpn->number = address;
 		insertIntoTLB(tlb, vpn, &rollingMiss);
-		printf("Address added: %lx\n", address);
-			
-		printf("Read/Write: %s\n", rw);
 	}
 	// Count number of entries in evicted and in tlb.
-	printf("\nTLB misses: %d\n", rollingMiss);
+	printf("TLB misses: %d\n", rollingMiss);
 	
 	int totalUnique = countUnique(tlb);
 	printf("VPNs: %d\n", totalUnique);	

@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
 
 	unsigned long long instAddr;
 	unsigned long long dataAddr;
+	unsigned long address1, address2;
 	struct linkedAddr* llAddr = createLinkedAddr();
 	
 	// Use 'head' to scan the linked list for every line in the pin trace.
@@ -36,7 +37,11 @@ int main(int argc, char *argv[]) {
 		
 		// Populate global structure for tests to use
 		// (all addresses found so far)
-		struct addr* address = createAddr(instAddr, rw, dataAddr);
+		// Convert to 32 bits
+		address1 = (int) instAddr & 0xffffffff; 
+		address2 = (int) dataAddr & 0xffffffff;
+		
+		struct addr* address = createAddr(address1, rw, address2);
 		addToEnd(llAddr, address);
 		//-------------------------------------------
 	}
