@@ -17,7 +17,7 @@ struct TLB
 
 struct VPN
 {
-	unsigned long number;
+	int number;
 	int hits;
 };
 
@@ -29,12 +29,12 @@ struct evictList
 
 // Prototypes
 struct TLB* createTLB(int size, int pageSize);
-void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss);
 struct VPN* createVPN();
 struct evictList* createEvictList(int initSize);
 struct evictList* add(struct evictList* eList, struct VPN* vpn);
 int inEvictList(struct evictList* eList, struct VPN* vpn);
 void removeFromEvictList(struct evictList* eList, struct VPN* vpn);
+void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss);
 //-----------
 
 struct TLB* createTLB(int size, int pageSize)
@@ -55,6 +55,21 @@ struct TLB* createTLB(int size, int pageSize)
 	return ptr;
 }
 
+struct evictList* createEvictList(int initSize)
+{
+	struct evictList* eList = (struct evictList*)malloc(sizeof(struct evictList));
+	eList->arr = (struct VPN**)malloc(initSize * sizeof(struct VPN));
+	eList->size = initSize;
+	
+	int j;
+	for (j = 0; j<initSize; j++)
+	{
+		eList->arr[j] = createVPN();
+	}
+	
+	return eList;
+}
+
 struct VPN* createVPN()
 {
 	struct VPN* vpn = (struct VPN*)malloc(sizeof(struct VPN));
@@ -68,14 +83,15 @@ struct VPN* createVPN()
 // Specify which tlb the vpn should be inserted into, as well as
 // a counter (which should be called by reference) to keep track
 // of total misses in the tlb thus far.
-void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
+void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 {
 	int j;
-	int checkHit, slotFound;
+	int checkHit = 0;
+	int slotFound = 0;
 	
 	// virtNum is the number of bits to be masked with vpn->num.
-	unsigned long offset = logl(tlb->pageSize)/logl(2);
-	unsigned long vpnSize = 32-offset;
+	//unsigned long offset = logl(tlb->pageSize)/logl(2);
+	//unsigned long vpnSize = 32-offset;
 	
 	for (j = 0; j<tlb->size; j++)
 	{
@@ -155,20 +171,7 @@ void insert(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 	}
 }
 
-struct evictList* createEvictList(int initSize)
-{
-	struct evictList* eList = (struct evictList*)malloc(sizeof(struct evictList));
-	eList->arr = (struct VPN**)malloc(initSize * sizeof(struct VPN));
-	eList->size = initSize;
-	
-	int j;
-	for (j = 0; j<initSize; j++)
-	{
-		eList->arr[j] = createVPN();
-	}
-	
-	return eList;
-}
+
 
 int inEvictList(struct evictList* eList, struct VPN* vpn)
 {
@@ -249,7 +252,8 @@ struct evictList* add(struct evictList* eList, struct VPN* vpn)
 
 int countUnique(struct TLB* tlb)
 {
-	int j, count;
+	int j;
+	int count = 0;
 	
 	// Count in TLB first.
 	for (j = 0; j<tlb->size; j++)
