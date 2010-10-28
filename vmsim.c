@@ -33,6 +33,10 @@ int main(int argc, char *argv[]) {
     mem_loc *prev = NULL;
 	while (fgets(line, 33, fp))
 	{
+        if (strcmp(line, "#eof\n") == 0 || strcmp(line, "#eof") == 0) {
+            break;
+        }
+
 		sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
 
 		// Populate global structure for tests to use
