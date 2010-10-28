@@ -1,3 +1,10 @@
+typedef struct _mem_loc {
+    struct _mem_loc *next;
+    unsigned int address;
+} mem_loc;
+
+mem_loc *mem_head;
+
 struct addr
 {
 	char* rw;
@@ -11,34 +18,6 @@ struct linkedAddr
 	struct addr* address;
 };
 
-struct addr* createAddr(int instAddr, char* rw, int dataAddr)
-{
-	struct addr* address = (struct addr*)malloc(sizeof(struct addr));
-	address->rw = rw;
-	address->instAddr = instAddr;
-	address->dataAddr = dataAddr;
-	
-	return address;
-}
-
-struct linkedAddr* createLinkedAddr()
-{
-	struct linkedAddr* llAddr = (struct linkedAddr*)malloc(sizeof(struct linkedAddr));
-	llAddr->next = NULL;
-	llAddr->address = NULL;
-	
-	return llAddr;
-}
-
-void addToEnd(struct linkedAddr* llAddr, struct addr* address)
-{
-	struct linkedAddr* ptr = llAddr;
-	
-	while (ptr->next != NULL)
-	{
-		ptr = ptr->next;
-	}
-	
-	ptr->address = address;
-	ptr = ptr->next;
-}
+struct addr* createAddr(int instAddr, char* rw, int dataAddr);
+struct linkedAddr* createLinkedAddr();
+void addToEnd(struct linkedAddr* llAddr, struct addr* address);
