@@ -3,36 +3,22 @@
 #include <string.h>
 #include <math.h>
 #include "tlbtest.h"
+#include "vmsim.h"
 
 void tlbtest(int tlbSize, int pageSize) 
 {	
 	int rollingMiss = 0;
-	char* line = (char *)malloc(33 * sizeof(char));
-	unsigned long long instAddr;
-	unsigned long long dataAddr;
-	char* rw = (char *)malloc(sizeof(char));
 	struct VPN* vpn;
-	unsigned long address;
 	struct TLB* tlb = createTLB(tlbSize, pageSize);
+	mem_loc* mem_ptr = mem_head;
 	
-	while (strcmp(fgets(line, 33, fp), "#eof") != 0)
-	{
-		if (line[0] != '\n')
-		{
-			sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
-			
-			// VPN to be inserted.
-			vpn = createVPN();	
-		
-			// Convert to 32bit.
-			address = (unsigned long) instAddr & 0xffffffff;
-			vpn->number = address;
-			insertIntoTLB(tlb, vpn, &rollingMiss);
-			
-			address = (unsigned long) dataAddr & 0xffffffff;
-			vpn->number = address;
-			insertIntoTLB(tlb, vpn, &rollingMiss);
-		}
+	while (mem_ptr != NULL)
+	{	
+		// VPN to be inserted.
+		vpn = createVPN();	
+		vpn->number = mem_ptr->address;
+		insertIntoTLB(tlb, vpn, &rollingMiss);
+		mem_ptr = mem_ptr->next;
 	}
 	// Count number of entries in evicted and in tlb.
 	printf("TLB misses: %d\n", rollingMiss);
@@ -96,7 +82,6 @@ void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 	unsigned long offset = logl(tlb->pageSize)/logl(2);
 	unsigned long vpnSize = 32-offset;
 	vpn->number = vpn->number >> vpnSize;
-	printf("Inserting: %lx\n", vpn->number);
 	
 	for (j = 0; j<tlb->size; j++)
 	{
