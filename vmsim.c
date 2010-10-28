@@ -81,8 +81,8 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "usage: vmsim wsstest pintrace pagesize windowsize");
             exit(1);
         }
-        
-	    wsstest(int pagesize, int windowSize);	
+        int windowSize = atoi(argv[4]);
+	    wsstest(pageSize, windowSize);	
 	}
 
     if (strcmp(testChoice, "prtest-fifo") == 0)
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
         int frames = atoi(argv[4]);
-        prtest_fifo(int pagesize, int frames);
+        prtest_fifo(pageSize, frames);
     }
 
     if (strcmp(testChoice, "prtest-2fifo") == 0) 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
         int frames = atoi(argv[4]);
-        prtest_2nd_fifo(int pagesize, int frames);
+        prtest_2nd_fifo(pageSize, frames);
     }
 	
     return 0;
