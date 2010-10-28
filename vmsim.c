@@ -17,14 +17,15 @@ int main(int argc, char *argv[]) {
 	unsigned long long instAddr;
 	unsigned long long dataAddr;
 	unsigned long address1, address2;  
-	
-	// Use 'head' to scan the linked list for every line in the pin trace.
-	// Implementation for linkedAddr is in vmsim.h
-	// struct linkedAddr* head = llAddr;
+
+    if (argc < 4) {
+        printUsage();
+        exit(1);
+    }
 	
 	char* rw = (char *)malloc(sizeof(char));
 	char* line = (char *)malloc(33 * sizeof(char));
-	
+
 	char* testChoice = argv[1];
 	FILE *fp = fopen(argv[2], "r");
 	int pageSize = atoi(argv[3]);
@@ -60,50 +61,48 @@ int main(int argc, char *argv[]) {
 		//-------------------------------------------
 	}
 	
-	if (strcmp(testChoice, "tlbtest") == 0)
-	{
-        if (argc < 4) {
-            fprintf(stderr, "usage: vmsim tlbtest pintrace pagesize tlbsize");
+	if (strcmp(testChoice, "tlbtest") == 0)	{
+        if (argc < 5) {
+            printUsage();
             exit(1);
         }
     	int tlbSize = atoi(argv[4]);
 		tlbtest(tlbSize, pageSize);
-	}
-	
-	if (strcmp(testChoice, "pttest") == 0)
-	{
+	} else if (strcmp(testChoice, "pttest") == 0) {
         pttest(pageSize);		
-	}
-	
-	if (strcmp(testChoice, "wsstest") == 0)
-	{
-        if (argc < 4) {
-            fprintf(stderr, "usage: vmsim wsstest pintrace pagesize windowsize");
+	} else if (strcmp(testChoice, "wsstest") == 0) {
+        if (argc < 5) {
+            printUsage();
             exit(1);
         }
         int windowSize = atoi(argv[4]);
 	    wsstest(pageSize, windowSize);	
-	}
-
-    if (strcmp(testChoice, "prtest-fifo") == 0)
-    {
-        if (argc < 4) {
-            fprintf(stderr, "usage: vmsim prtest-fifo pintrace pagesize frames");
+	} else if (strcmp(testChoice, "prtest-fifo") == 0) {
+        if (argc < 5) {
+            printUsage();
             exit(1);
         }
         int frames = atoi(argv[4]);
         prtest_fifo(pageSize, frames);
-    }
-
-    if (strcmp(testChoice, "prtest-2fifo") == 0) 
-    {
-        if (argc < 4) {
-            fprintf(stderr, "usage: vmsim prtest-2fifo pintrace pagesize frames");
+    } else if (strcmp(testChoice, "prtest-2fifo") == 0) {
+        if (argc < 5) {
+            printUsage();
             exit(1);
         }
         int frames = atoi(argv[4]);
         prtest_2nd_fifo(pageSize, frames);
+    } else {
+        printUsage();
+        exit(1);
     }
 	
     return 0;
+}
+
+void printUsage() {
+    fprintf(stderr, "usage: vmsim test tracefile pagesize [extra]\n");
+    fprintf(stderr, "  test: [tlbtest|wsstest|pttest|prtest-fifo|prtest-2fifo]\n");
+    fprintf(stderr, "  tracefile: filename containing pin output\n");
+    fprintf(stderr, "  pagesize: integer representing page size (in bytes)\n");
+    fprintf(stderr, "  extra: integer representing tlb size (for tlbtest), window size (for wsstest)\n    or number of frames (for prtest variations)\n");
 }
