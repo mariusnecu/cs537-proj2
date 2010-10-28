@@ -96,8 +96,23 @@ void pttest(int pagesize) {
             if (inUseList == NULL) {
                 inUseList = inUseTail = fr_node;
             } else {
-                inUseTail->next = fr_node;
-                inUseTail = fr_node;
+                // Insert the node into the sorted list.
+                frame_list *inUseIter = inUseList;
+                frame_list *inUsePrev = NULL;
+                while (1) {
+                    if (inUseIter != NULL && vpn > inUseIter->ent->vpn) {
+                        inUsePrev = inUseIter;
+                        inUseIter = inUseIter->next;
+                        continue;
+                    }
+                    if (inUsePrev == NULL) {
+                        inUseList = fr_node;
+                    } else {
+                        inUsePrev->next = fr_node;
+                    }                  
+                    fr_node->next = inUseIter;
+                    break;
+                }
             }
         }
         loc = loc->next;     
