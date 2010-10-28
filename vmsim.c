@@ -37,28 +37,31 @@ int main(int argc, char *argv[]) {
         if (strcmp(line, "#eof\n") == 0 || strcmp(line, "#eof") == 0) {
             break;
         }
-
-		sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
-
-		// Populate global structure for tests to use
-		// (all addresses found so far)
-		// Convert to 32 bits
-		address1 = (unsigned long) instAddr & 0xffffffff; 
-		address2 = (unsigned long) dataAddr & 0xffffffff;
 		
-        // Populate one-dimensional linked list.
-        mem_loc *instLoc = malloc(sizeof(mem_loc));
-        instLoc->address = address1;
-        mem_loc *dataLoc = malloc(sizeof(mem_loc));
-        dataLoc->address = address2;
-        instLoc->next = dataLoc;
-        if (prev == NULL) {
-            mem_head = instLoc;
-        } else {
-            prev->next = instLoc;
-        }
-        prev = dataLoc;
-		//-------------------------------------------
+		if (line[0] != '\n')
+		{
+			sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
+
+			// Populate global structure for tests to use
+			// (all addresses found so far)
+			// Convert to 32 bits
+			address1 = (unsigned long) instAddr & 0xffffffff; 
+			address2 = (unsigned long) dataAddr & 0xffffffff;
+		
+        	// Populate one-dimensional linked list.
+        	mem_loc *instLoc = malloc(sizeof(mem_loc));
+        	instLoc->address = address1;
+        	mem_loc *dataLoc = malloc(sizeof(mem_loc));
+        	dataLoc->address = address2;
+        	instLoc->next = dataLoc;
+        	if (prev == NULL) {
+            	mem_head = instLoc;
+        	} else {
+            	prev->next = instLoc;
+        	}
+        	prev = dataLoc;
+			//-------------------------------------------
+		}
 	}
 	
 	if (strcmp(testChoice, "tlbtest") == 0)	{
@@ -83,14 +86,14 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
         int frames = atoi(argv[4]);
-        prtest_fifo(pageSize, frames);
+       // prtest_fifo(pageSize, frames);
     } else if (strcmp(testChoice, "prtest-2fifo") == 0) {
         if (argc < 5) {
             printUsage();
             exit(1);
         }
         int frames = atoi(argv[4]);
-        prtest_2nd_fifo(pageSize, frames);
+        //prtest_2nd_fifo(pageSize, frames);
     } else {
         printUsage();
         exit(1);
