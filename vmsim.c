@@ -16,8 +16,7 @@ int main(int argc, char *argv[]) {
 
 	unsigned long long instAddr;
 	unsigned long long dataAddr;
-	unsigned long address1, address2;
-	struct linkedAddr* llAddr = createLinkedAddr();    
+	unsigned long address1, address2;  
 	
 	// Use 'head' to scan the linked list for every line in the pin trace.
 	// Implementation for linkedAddr is in vmsim.h
@@ -39,14 +38,14 @@ int main(int argc, char *argv[]) {
 		// Populate global structure for tests to use
 		// (all addresses found so far)
 		// Convert to 32 bits
-		address1 = (int) instAddr & 0xffffffff; 
-		address2 = (int) dataAddr & 0xffffffff;
+		address1 = (unsigned long) instAddr & 0xffffffff; 
+		address2 = (unsigned long) dataAddr & 0xffffffff;
 		
         // Populate one-dimensional linked list.
         mem_loc *instLoc = malloc(sizeof(mem_loc));
-        instLoc->address = instAddr;
+        instLoc->address = address1;
         mem_loc *dataLoc = malloc(sizeof(mem_loc));
-        dataLoc->address = dataAddr;
+        dataLoc->address = address2;
         instLoc->next = dataLoc;
         if (prev == NULL) {
             mem_head = instLoc;
@@ -54,11 +53,6 @@ int main(int argc, char *argv[]) {
             prev->next = instLoc;
         }
         prev = dataLoc;
-
-
-		
-		//struct addr* address = createAddr(address1, rw, address2);
-		//addToEnd(llAddr, address);
 		//-------------------------------------------
 	}
 	
@@ -85,36 +79,4 @@ int main(int argc, char *argv[]) {
 	}
 	
     return 0;
-}
-
-struct addr* createAddr(int instAddr, char* rw, int dataAddr)
-{
-	struct addr* address = (struct addr*)malloc(sizeof(struct addr));
-	address->rw = rw;
-	address->instAddr = instAddr;
-	address->dataAddr = dataAddr;
-	
-	return address;
-}
-
-struct linkedAddr* createLinkedAddr()
-{
-	struct linkedAddr* llAddr = (struct linkedAddr*)malloc(sizeof(struct linkedAddr));
-	llAddr->next = NULL;
-	llAddr->address = NULL;
-	
-	return llAddr;
-}
-
-void addToEnd(struct linkedAddr* llAddr, struct addr* address)
-{
-	struct linkedAddr* ptr = llAddr;
-	
-	while (ptr->next != NULL)
-	{
-		ptr = ptr->next;
-	}
-	
-	ptr->address = address;
-	ptr = ptr->next;
 }
