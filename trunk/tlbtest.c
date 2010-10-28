@@ -17,18 +17,22 @@ void tlbtest(FILE* fp, int tlbSize, int pageSize)
 	
 	while (strcmp(fgets(line, 33, fp), "#eof") != 0)
 	{
-		sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
-		// VPN to be inserted.
-		vpn = createVPN();
+		if (line[0] != '\n')
+		{
+			sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
 			
-		// Convert to 32bit.
-		address = (int) instAddr & 0xffffffff;
-		vpn->number = address;
-		insertIntoTLB(tlb, vpn, &rollingMiss);
+			// VPN to be inserted.
+			vpn = createVPN();	
+		
+			// Convert to 32bit.
+			address = (unsigned long) instAddr & 0xffffffff;
+			vpn->number = address;
+			insertIntoTLB(tlb, vpn, &rollingMiss);
 			
-		address = (int) dataAddr & 0xffffffff;
-		vpn->number = address;
-		insertIntoTLB(tlb, vpn, &rollingMiss);
+			address = (unsigned long) dataAddr & 0xffffffff;
+			vpn->number = address;
+			insertIntoTLB(tlb, vpn, &rollingMiss);
+		}
 	}
 	// Count number of entries in evicted and in tlb.
 	printf("TLB misses: %d\n", rollingMiss);
@@ -89,8 +93,10 @@ void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 	int slotFound = 0;
 	
 	// virtNum is the number of bits to be masked with vpn->num.
-	//unsigned long offset = logl(tlb->pageSize)/logl(2);
-	//unsigned long vpnSize = 32-offset;
+	unsigned long offset = logl(tlb->pageSize)/logl(2);
+	unsigned long vpnSize = 32-offset;
+	vpn->number = vpn->number >> vpnSize;
+	printf("Inserting: %lx\n", vpn->number);
 	
 	for (j = 0; j<tlb->size; j++)
 	{
@@ -169,8 +175,6 @@ void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 		*rollingMiss = *rollingMiss + 1;
 	}
 }
-
-
 
 int inEvictList(struct evictList* eList, struct VPN* vpn)
 {

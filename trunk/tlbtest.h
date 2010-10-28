@@ -1,3 +1,9 @@
+#ifndef TLBTEST_H_
+#define TLBTEST_H_
+
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 struct TLB
 {
@@ -9,7 +15,7 @@ struct TLB
 
 struct VPN
 {
-	int number;
+	unsigned long number;
 	int hits;
 };
 
@@ -30,4 +36,6 @@ void removeFromEvictList(struct evictList* eList, struct VPN* vpn);
 void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss);
 int countUnique(struct TLB* tlb);
 //-----------
+
+#endif
 
