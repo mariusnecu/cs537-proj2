@@ -4,3 +4,5 @@ typedef struct _mem_loc {
 } mem_loc;
 
 mem_loc *mem_head;
+
+void printUsage();
