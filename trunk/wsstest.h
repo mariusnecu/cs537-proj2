@@ -1,2 +1,2 @@
 
-void wsstest();
+void wsstest(int pagesize, int windowSize);

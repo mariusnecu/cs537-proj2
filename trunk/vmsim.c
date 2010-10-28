@@ -67,9 +67,7 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
     	int tlbSize = atoi(argv[4]);
-		// fp needs to be reset before being used again.
-		fp = fopen(argv[2], "r");
-		tlbtest(fp, tlbSize, pageSize);
+		tlbtest(tlbSize, pageSize);
 	}
 	
 	if (strcmp(testChoice, "pttest") == 0)
@@ -79,8 +77,33 @@ int main(int argc, char *argv[]) {
 	
 	if (strcmp(testChoice, "wsstest") == 0)
 	{
-		
+        if (argc < 4) {
+            fprintf(stderr, "usage: vmsim wsstest pintrace pagesize windowsize");
+            exit(1);
+        }
+        
+	    wsstest(int pagesize, int windowSize);	
 	}
+
+    if (strcmp(testChoice, "prtest-fifo") == 0)
+    {
+        if (argc < 4) {
+            fprintf(stderr, "usage: vmsim prtest-fifo pintrace pagesize frames");
+            exit(1);
+        }
+        int frames = atoi(argv[4]);
+        prtest_fifo(int pagesize, int frames);
+    }
+
+    if (strcmp(testChoice, "prtest-2fifo") == 0) 
+    {
+        if (argc < 4) {
+            fprintf(stderr, "usage: vmsim prtest-2fifo pintrace pagesize frames");
+            exit(1);
+        }
+        int frames = atoi(argv[4]);
+        prtest_2nd_fifo(int pagesize, int frames);
+    }
 	
     return 0;
 }
