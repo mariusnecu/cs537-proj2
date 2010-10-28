@@ -9,6 +9,7 @@
 #include <string.h>
 #include <math.h>
 #include "pttest.h"
+#include "vmsim.h"
 
 // Example trace for testing.
 unsigned int trace[] = {
@@ -63,9 +64,11 @@ void pttest(int pagesize) {
     page_table *root = initializePageTable();
 
     // Process the trace in order, allocating pages as needed
-    int i;
-    for (i=0; i<sizeof(trace)/sizeof(int); i++) {
-        unsigned int location = trace[i];
+    int i;    
+    //for (i=0; i<sizeof(trace)/sizeof(int); i++) {
+    mem_loc *loc = mem_head;
+    while (loc != NULL) {
+        unsigned int location = loc->address;
 
         page_table *tbl = root;
 
@@ -102,7 +105,8 @@ void pttest(int pagesize) {
             tbl->entries[vpn] = en;
             tbl->used_count++;
             currentFrame++;
-        }        
+        }
+        loc = loc->next;     
     }
 
     page_table *table = root;
@@ -118,6 +122,7 @@ page_table *initializePageTable() {
     entry **entries = malloc(sizeof(entry*) * entriesPerTable);
     pt->entries = entries;
     tablesInUse++;
+    printf("Creating page table\n");
     return pt;
 }
 
