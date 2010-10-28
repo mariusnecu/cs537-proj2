@@ -122,8 +122,11 @@ void fifoAddFast(struct fifoQueue *elt, struct fifoQueue *queue) {
 //The first fifo is constructed using an array and a counter.
 //The second fifo uses a list and a size check, to allow for
 //removal of an internal elt to move back to the first fifo.
-void prtest_2nd_fifo(struct memList *list, int numframes) {
+void prtest_2nd_fifo(int pagesize, int numframes) {
+  
   struct memList *head, *next;
+  head = mem_head;
+
   unsigned int fifo[numframes*3/4], filled[numframes*3/4], lastFirstFifo; //filled so that accesses to initial int value are checked
   struct fifoQueue *queue=NULL, *elt=NULL, *evicted, *temp;
   int i,j, hardfaults=0, softfaults=0, numframes1=numframes*3/4, numframes2=numframes/4;
@@ -248,8 +251,13 @@ void prtest_2nd_fifo(struct memList *list, int numframes) {
 //The first queue is constructed using an array and a counter,
 //because it only needs to support fixed size and removal from
 //the last used
-void prtest_fifo(struct memList *list, int numframes) {
+void prtest_fifo(int pagesize, int numframes) {
   struct memList *head, *next;
+  head = mem_head;
+
+  int offset = (int)ceil(log2((double)pagesize));
+   
+
   unsigned int fifo[numframes], filled[numframes]; //filled so that accesses to initial int value are checked
   int i,j, hardfaults=0;
   int found=0;

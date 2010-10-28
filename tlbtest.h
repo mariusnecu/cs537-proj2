@@ -26,7 +26,7 @@ struct evictList
 };
 
 // Prototypes
-void tlbtest(FILE* fp, int tlbSize, int pageSize);
+void tlbtest(int tlbSize, int pageSize);
 struct TLB* createTLB(int size, int pageSize);
 struct VPN* createVPN();
 struct evictList* createEvictList(int initSize);

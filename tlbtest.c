@@ -4,7 +4,7 @@
 #include <math.h>
 #include "tlbtest.h"
 
-void tlbtest(FILE* fp, int tlbSize, int pageSize) 
+void tlbtest(int tlbSize, int pageSize) 
 {	
 	int rollingMiss = 0;
 	char* line = (char *)malloc(33 * sizeof(char));
