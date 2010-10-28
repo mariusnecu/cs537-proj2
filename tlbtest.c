@@ -155,9 +155,12 @@ void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss)
 				tlb->arr[index]->number = vpn->number;
 				tlb->arr[index]->hits = 0;
 			}
-			
 		}
-		*rollingMiss = *rollingMiss + 1;
+		if (checkHit == 0)
+		{
+			// Miss in the TLB.
+			*rollingMiss = *rollingMiss + 1;
+		}
 	}
 }
 
