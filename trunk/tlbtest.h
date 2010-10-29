@@ -8,33 +8,29 @@
 struct TLB
 {
 	int size;
-	int pageSize;
 	struct VPN** arr;
 	struct evictList* eList;
 };
 
 struct VPN
 {
-	unsigned long number;
-	int hits;
+	int number;
+	int lastUsed;
 };
 
 struct evictList
 {
-	int size;
-	struct VPN** arr;
+    struct evictList *next;
+	struct VPN* arr;
 };
 
 // Prototypes
 void tlbtest(int tlbSize, int pageSize);
-struct TLB* createTLB(int size, int pageSize);
+struct TLB* createTLB(int size);
 struct VPN* createVPN();
-struct evictList* createEvictList(int initSize);
-struct evictList* add(struct evictList* eList, struct VPN* vpn);
-int inEvictList(struct evictList* eList, struct VPN* vpn);
-void removeFromEvictList(struct evictList* eList, struct VPN* vpn);
-void insertIntoTLB(struct TLB* tlb, struct VPN* vpn, int *rollingMiss);
-int countUnique(struct TLB* tlb);
+void addToEvictList(struct evictList* eList, struct VPN* vpn);
+struct VPN *removeFromEvictList(struct evictList* eList, int vpn);
+void insertIntoTLB(struct TLB* tlb, int vpn, int *rollingMiss);
 //-----------
 
 #endif
