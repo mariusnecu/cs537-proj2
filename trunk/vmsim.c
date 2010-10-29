@@ -65,41 +65,41 @@ int main(int argc, char *argv[]) {
 	}
 	
 	if (strcmp(testChoice, "tlbtest") == 0)	{
-        if (argc < 5) {
+	  if (argc < 5) {
             printUsage();
             exit(1);
-        }
-    	int tlbSize = atoi(argv[4]);
-		tlbtest(tlbSize, pageSize);
+	  }
+	  int tlbSize = atoi(argv[4]);
+	  tlbtest(tlbSize, pageSize);
 	} else if (strcmp(testChoice, "pttest") == 0) {
-        pttest(pageSize);		
+	  pttest(pageSize);		
 	} else if (strcmp(testChoice, "wsstest") == 0) {
-        if (argc < 5) {
+	  if (argc < 5) {
             printUsage();
             exit(1);
-        }
-        int windowSize = atoi(argv[4]);
-	    wsstest(pageSize, windowSize);	
+	  }
+	  int windowSize = atoi(argv[4]);
+	  wsstest(pageSize, windowSize);	
 	} else if (strcmp(testChoice, "prtest-fifo") == 0) {
-        if (argc < 5) {
+	  if (argc < 5) {
             printUsage();
             exit(1);
-        }
-        int frames = atoi(argv[4]);
-       // prtest_fifo(pageSize, frames);
-    } else if (strcmp(testChoice, "prtest-2fifo") == 0) {
-        if (argc < 5) {
+	  }
+	  int frames = atoi(argv[4]);
+	  prtest_fifo(pageSize, frames);
+	} else if (strcmp(testChoice, "prtest-2fifo") == 0) {
+	  if (argc < 5) {
             printUsage();
             exit(1);
-        }
-        int frames = atoi(argv[4]);
-        //prtest_2nd_fifo(pageSize, frames);
-    } else {
-        printUsage();
-        exit(1);
-    }
+	  }
+	  int frames = atoi(argv[4]);
+	  prtest_2nd_fifo(pageSize, frames);
+	} else {
+	  printUsage();
+	  exit(1);
+	}
 	
-    return 0;
+	return 0;
 }
 
 void printUsage() {
