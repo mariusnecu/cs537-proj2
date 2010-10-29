@@ -53,19 +53,17 @@ int fifoRemove(struct fifoQueue *elt, struct fifoQueue *queue) {
     return 0;
   }
 
-  //Head case
-  //  printf("%i_%i\n",temp->value,elt->value);
-  if(temp->value==elt->value) { //Move the head
+                                   //Head case
+  if(temp->value==elt->value) {
     //    printf("head modification\n");
     temp = queue;
     queue = queue->next;
     temp->next = NULL;
     return 1;
   }
-  //The rest
+                                   //The rest
   temp = temp->next;
   while(temp!=NULL) {
-    //    printf("%i_%i\n",temp->value,elt->value);
     if(temp->value==elt->value) {
       previous->next = temp->next; //temp is now skipped
       temp->next = NULL;
@@ -109,10 +107,6 @@ struct fifoQueue* fifoAdd(struct fifoQueue *elt, struct fifoQueue *queue, int MA
       temp->next = NULL;
       return next;
     }
-    //    if(next->next==NULL) {
-    //      temp->next = NULL;
-    //      return next;
-    //    }
     temp = temp->next;
   }
   return NULL;
@@ -133,12 +127,12 @@ void prtest_2nd_fifo(int pagesize, int numframes) {
   struct fifoQueue *queue=NULL, *elt=NULL, *evicted;
   int i,j, hardfaults=0, softfaults=0, numframes1=numframes*3/4, numframes2=numframes/4;
   int found=0;
-  FILE *TFILE;
-  TFILE = fopen("pr2.trace","w");
-  fprintf(TFILE,"page size %i, frames %i\n",pagesize,numframes);
+  //  FILE *TFILE;
+  //  TFILE = fopen("pr2.trace","w");
+  //  fprintf(TFILE,"page size %i, frames %i\n",pagesize,numframes);
   
   //Initialize first fifo
-  for(i=0;i<numframes;i++) {
+  for(i=0;i<numframes1;i++) {
     fifo[i] = 0;
     filled[i] = 0;
   }
@@ -155,7 +149,7 @@ void prtest_2nd_fifo(int pagesize, int numframes) {
   i=0;
   while(next!=NULL) {
     found=0;
-    for(j=0;j<numframes;j++) {
+    for(j=0;j<numframes1;j++) {
       if(next->address >> offset == fifo[j] && filled[j]) {
 	found=1;
 	break;
@@ -174,56 +168,35 @@ void prtest_2nd_fifo(int pagesize, int numframes) {
       elt = (struct fifoQueue*) malloc(sizeof(struct fifoQueue));
       elt->value = next->address >> offset;
 
-      if(fifoRemove(elt,queue)) { //Found elt in the secondFifo ==softfault
-	//OLD	queue = temp; //reassign queue to the head of the modified queue (in case head was removed)
-	fprintf(TFILE, "VPN 0x%x soft fault\n",next->address>>offset);
+      if(fifoRemove(elt,queue)) {                                     // ==softfault
+	//	fprintf(TFILE, "VPN 0x%x soft fault\n",next->address>>offset);
 
-	//Add end of firstFifo to secondFifo
-	fprintf(TFILE, "VPN 0x%x moved to second chance queue\n",fifo[i]);
+                                                               	      //Add end of firstFifo to secondFifo
+	//	fprintf(TFILE, "VPN 0x%x moved to second chance queue\n",fifo[i]);
 	lastFirstFifo = fifo[i];
 	elt->value = lastFirstFifo;
 
-	//	evicted = queue;
-	//	while(evicted!=NULL) {
-	//	  printf("%i_____\n",evicted->value);
-	//	  evicted = evicted->next;
-	//	}
+	evicted = fifoAdd(elt,queue,numframes2);                      //Replace with addFast once checked
 
-	evicted = fifoAdd(elt,queue,numframes2); //Replace with addFast once checked
-	//queue = elt;
-
-	//	printf("AFTER\n");
-	//	evicted = queue;
-	//	while(evicted!=NULL) {
-	//	  printf("%i_____\n",evicted->value);
-	//	  evicted = evicted->next;
-	//	}
-
-	if(evicted!=NULL) { //Error check
+	if(evicted!=NULL) {                                           //Error check
 	  printf("Error: queue size should not be exceeded here\n");
 	  exit(1);
 	}
 
-	//Add secondFifo->value back to first queue
+        //Add secondFifo->value back to first queue
 	fifo[i] = next->address >> offset;
 	softfaults++;
 
-      } else { 	// ==hardfault
-	fprintf(TFILE, "VPN 0x%x hard fault\n",next->address>>offset);
+      } else { 	                                                      // ==hardfault
+	//	fprintf(TFILE, "VPN 0x%x hard fault b\n",next->address>>offset);
 	elt->value=fifo[i];
-	fprintf(TFILE, "VPN 0x%x moved to second chance queue\n",fifo[i]);
-	fifo[i] = next->address >> offset; //firstFifo replaced
-	evicted = fifoAdd(elt,queue,numframes/4); //secondFifo replaced
-	//queue = elt;
-	//	evicted = queue;
-	//	while(evicted!=NULL) {
-	//	  printf("%i_____\n",evicted->value);
-	//	  evicted = evicted->next;
-	//	}
+	//	fprintf(TFILE, "VPN 0x%x moved to second chance queue\n",fifo[i]);
+	fifo[i] = next->address >> offset;                            //firstFifo replaced
+	evicted = fifoAdd(elt,queue,numframes/4);                     //secondFifo replaced
 
 	hardfaults++;
 	if(evicted!=NULL) {
-	  fprintf(TFILE,"VPN 0x%x evicted\n",evicted->value);
+	  //	  fprintf(TFILE,"VPN 0x%x evicted\n",evicted->value);
 	  free(evicted);
 	  evicted = NULL;
 	}
@@ -231,7 +204,7 @@ void prtest_2nd_fifo(int pagesize, int numframes) {
       }
 
     } else {
-      fprintf(TFILE, "VPN 0x%x hard fault\n",next->address>>offset);
+      //      fprintf(TFILE, "VPN 0x%x hard fault a\n",next->address>>offset);
       filled[i] = 1;
       fifo[i] = next->address >> offset;
       hardfaults++;
@@ -249,7 +222,7 @@ void prtest_2nd_fifo(int pagesize, int numframes) {
     queue = queue->next;
     free(elt);
   }
-  fclose(TFILE);
+  //  fclose(TFILE);
 }
 
 
@@ -262,7 +235,7 @@ void prtest_fifo(int pagesize, int numframes) {
   unsigned int fifo[numframes], filled[numframes];    //filled so that accesses to initial int value are checked
   int i,j, hardfaults=0;
   int found=0;
-  FILE *tfile;
+  //  FILE *tfile;
 
                                                       //Initialize array
   for(i=0;i<numframes;i++) {
@@ -273,8 +246,8 @@ void prtest_fifo(int pagesize, int numframes) {
                                                       //Get list  
   head = mem_head;                                    //Access address list
   next = head;
-  tfile = fopen("pr.trace","w");
-  fprintf(tfile,"pagesize %i, frames %i\n", pagesize, numframes);
+  //  tfile = fopen("pr.trace","w");
+  //  fprintf(tfile,"pagesize %i, frames %i\n", pagesize, numframes);
   
                                                       //Enter list elts to fifo
   i=0;
@@ -291,9 +264,9 @@ void prtest_fifo(int pagesize, int numframes) {
       next = next->next;
       continue;
     } else {
-      fprintf(tfile, "VPN 0x%x hard fault\n",next->address >> offset);
+      //      fprintf(tfile, "VPN 0x%x hard fault\n",next->address >> offset);
       if(filled[i]) {
-	fprintf(tfile, "VPN 0x%x evicted\n", fifo[i]);
+	//	fprintf(tfile, "VPN 0x%x evicted\n", fifo[i]);
       }
       fifo[i] = next->address >> offset;
       filled[i]=1;
@@ -302,7 +275,7 @@ void prtest_fifo(int pagesize, int numframes) {
       next = next->next;
     }
   }
-  fclose(tfile);
+  //  fclose(tfile);
   printf("hard faults: %i\n",hardfaults);
   printf("soft faults: 0\n");
 }
