@@ -92,7 +92,7 @@ int wsstest(int pagesize, int windowsize) {
 	}
 
 	// Calculate 
-	for (i = 0; i < limit; i++) {
+	for (i = 0; i <= limit; i++) {
 	  loc = mem_head;
 	  //loc = vs_array[i];
 	  for (j = i; (j <= windowsize + i) && (j <= limit); j++) {
@@ -147,7 +147,9 @@ int wsstest(int pagesize, int windowsize) {
 	}*/
 	
 	// Calculate the average working set size
-	int averageset = sum/totalSize;
+	double avg1 = sum/totalSize;
+	double avg2 = floor(avg1);
+	int averageset = avg2;
 	
 	printf("WS Size: %d\n", averageset);
 	return 0;
