@@ -14,9 +14,8 @@
 
 int main(int argc, char *argv[]) {
 
-	unsigned long long instAddr;
-	unsigned long long dataAddr;
-	unsigned long address1, address2;  
+	unsigned long long instAddr, dataAddr;
+	unsigned int address1, address2;  
 
     if (argc < 4) {
         printUsage();
@@ -38,30 +37,27 @@ int main(int argc, char *argv[]) {
             break;
         }
 		
-		if (line[0] != '\n')
-		{
-			sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
+        sscanf(line, "0x%llx: %s 0x%llx", &instAddr, rw, &dataAddr);
 
-			// Populate global structure for tests to use
-			// (all addresses found so far)
-			// Convert to 32 bits
-			address1 = (unsigned long) instAddr & 0xffffffff; 
-			address2 = (unsigned long) dataAddr & 0xffffffff;
-		
-        	// Populate one-dimensional linked list.
-        	mem_loc *instLoc = malloc(sizeof(mem_loc));
-        	instLoc->address = address1;
-        	mem_loc *dataLoc = malloc(sizeof(mem_loc));
-        	dataLoc->address = address2;
-        	instLoc->next = dataLoc;
-        	if (prev == NULL) {
-            	mem_head = instLoc;
-        	} else {
-            	prev->next = instLoc;
-        	}
-        	prev = dataLoc;
-			//-------------------------------------------
-		}
+        // Populate global structure for tests to use
+        // (all addresses found so far)
+        // Convert to 32 bits
+        address1 = (unsigned int) instAddr & 0xffffffff; 
+        address2 = (unsigned int) dataAddr & 0xffffffff;
+    
+        // Populate one-dimensional linked list.
+        mem_loc *instLoc = malloc(sizeof(mem_loc));
+        instLoc->address = address1;
+        mem_loc *dataLoc = malloc(sizeof(mem_loc));
+        dataLoc->address = address2;
+        instLoc->next = dataLoc;
+        if (prev == NULL) {
+            mem_head = instLoc;
+        } else {
+            prev->next = instLoc;
+        }
+        prev = dataLoc;
+        //-------------------------------------------
 	}
 	
 	if (strcmp(testChoice, "tlbtest") == 0)	{
