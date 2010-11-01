@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     mem_loc *prev = NULL;
 	while (fgets(line, 33, fp))
 	{
-        if (strcmp(line, "#eof\n") == 0 || strcmp(line, "#eof") == 0) {
+        if (strcmp(line, "#eof\n") == 0 || strcmp(line, "#eof") == 0 || strcmp(line, "\n") == 0) {
             break;
         }
 		
