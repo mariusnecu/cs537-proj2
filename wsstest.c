@@ -65,7 +65,9 @@ int wsstest(int pagesize, int windowsize) {
 	}
 	loc = mem_head;
 
-	int numPages = (maxAddress - minAddress)/(pagesize) + 1;
+	double arit = (maxAddress - minAddress)/pagesize;
+	double arit2 = ceil(arit);
+	int pageNum = arith2;
 	
 	// Create unique virtual pages
 	struct page *x = (struct page*)malloc((sizeof(int))*numPages);
