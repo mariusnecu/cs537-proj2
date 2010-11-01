@@ -95,7 +95,9 @@ int wsstest(int pagesize, int windowsize) {
 	  //loc = vs_array[i];
 	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
-	    int pageNum = (currentAddress - minAddress)/pagesize;
+	    double arith = (currentAddress - minAddress)/pagesize;
+	    double arith2 = floor(arith);
+	    int pageNum = arith2;
 	    if (x[pageNum].refed == 0) {
 	      x[pageNum].refed = 1;
 	      numRef++;
@@ -108,7 +110,9 @@ int wsstest(int pagesize, int windowsize) {
 	  loc = mem_head;
 	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
-	    int pageNum = (currentAddress - minAddress)/pagesize;
+	    double arith = (currentAddress - minAddress)/pagesize;
+	    double arith2 = floor(arith);
+	    int pageNum = arith2;
 	    x[pageNum].refed = 0;
 	    loc = loc->next;
 	  }
