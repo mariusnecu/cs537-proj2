@@ -28,7 +28,7 @@ struct evictList
 void tlbtest(int tlbSize, int pageSize);
 struct TLB* createTLB(int size);
 struct VPN* createVPN();
-void addToEvictList(struct evictList* eList, struct VPN* vpn);
+struct evictList* addToEvictList(struct evictList* eList, struct VPN* vpn);
 struct VPN *removeFromEvictList(struct evictList* eList, int vpn);
 void insertIntoTLB(struct TLB* tlb, int vpn, int *rollingMiss);
 //-----------

@@ -50,8 +50,8 @@ struct VPN* createVPN(int vpn)
 	vpn_obj->lastUsed = timer;
     timer++;
 
-    // Increment the count of VPNs
 	vpnCount++;
+    // Increment the count of VPNs
 	return vpn_obj;
 }
 
@@ -111,7 +111,7 @@ void insertIntoTLB(struct TLB* tlb, int vpn, int *rollingMiss)
         }
     }
     // Add evicted VPN to evicted list here.
-    addToEvictList(tlb->eList, tlb->arr[index]);
+    tlb->eList = addToEvictList(tlb->eList, tlb->arr[index]);
 
     // Insert VPN into TLB.
     tlb->arr[index] = vpn_obj;
@@ -121,8 +121,14 @@ void insertIntoTLB(struct TLB* tlb, int vpn, int *rollingMiss)
 struct VPN* removeFromEvictList(struct evictList* eList, int vpn)
 {
     struct evictList *node = eList;
+	struct evictList *prev = NULL;
     while (node != NULL) {
         if (node->arr->number == vpn) {
+			if (prev != NULL) {
+				prev->next = node->next;
+			} else {
+				eList = node->next;
+			}
             return node->arr;
         }
         node = node->next;
@@ -130,7 +136,7 @@ struct VPN* removeFromEvictList(struct evictList* eList, int vpn)
     return NULL;
 }
 
-void addToEvictList(struct evictList* eList, struct VPN* vpn_obj)
+struct evictList* addToEvictList(struct evictList* eList, struct VPN* vpn_obj)
 {
     struct evictList *node = eList;
     while (node != NULL) {
@@ -138,11 +144,12 @@ void addToEvictList(struct evictList* eList, struct VPN* vpn_obj)
             struct evictList *el = malloc(sizeof(struct evictList));
             el->arr = vpn_obj;
             node->next = el;
-            return;
+            return eList;
         }
         node = node->next;
     }
     
     eList = malloc(sizeof(struct evictList));
+	eList->arr = vpn_obj;
+	return eList;
 }
-
