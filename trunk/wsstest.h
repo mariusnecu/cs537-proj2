@@ -1,2 +1,6 @@
+/*
+ * Header file for Part 2
+ *
+ */
 
-void wsstest(int pagesize, int windowSize);
+int wsstest(int pagesize, int windowsize);
