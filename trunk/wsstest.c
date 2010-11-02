@@ -143,6 +143,8 @@ int wsstest(int pagesize, int windowsize) {
 		numRef = 0;
 		i++;
 	}*/
+
+	
 	
 	// Calculate the average working set size
 	int averageset = sum/totalSize;
