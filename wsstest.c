@@ -85,6 +85,7 @@ int wsstest(int pagesize, int windowsize) {
 	// Take care of the edge case
 	if (windowsize > numAddresses) {
 		limit = numAddresses;
+		sum++;
 	} else {
 		limit = numAddresses - windowsize;
 	}
