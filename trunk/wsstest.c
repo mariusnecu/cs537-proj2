@@ -110,9 +110,9 @@ int wsstest(int pagesize, int windowsize) {
 	  loc = mem_head;
 	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
-	    double arith = (currentAddress - minAddress)/pagesize;
-	    double arith2 = floor(arith);
-	    int pageNum = arith2;
+	    double n1 = currentAddress/range;
+	    double n2 = n1*numPages;
+	    int pageNum = floor(n2);
 	    x[pageNum].refed = 0;
 	    loc = loc->next;
 	  }
