@@ -65,9 +65,7 @@ int wsstest(int pagesize, int windowsize) {
 	}
 	loc = mem_head;
 
-	double arit = (maxAddress - minAddress)/pagesize;
-	double arit2 = ceil(arit);
-	int pageNum = arith2;
+	int numPages = (maxAddress - minAddress)/(pagesize);
 	
 	// Create unique virtual pages
 	struct page *x = (struct page*)malloc((sizeof(int))*numPages);
@@ -86,19 +84,19 @@ int wsstest(int pagesize, int windowsize) {
 	
 	// Take care of the edge case
 	if (windowsize > numAddresses) {
-		limit = numAddresses - 1;
+		limit = numAddresses;
 	} else {
-		limit = numAddresses - windowsize - 1;
+		limit = numAddresses - windowsize;
 	}
 
 	// Calculate 
-	for (i = 0; i <= limit; i++) {
+	for (i = 0; i < limit; i++) {
 	  loc = mem_head;
 	  //loc = vs_array[i];
-	  for (j = i; (j < windowsize + i); j++) {
+	  for (j = i; (j <= windowsize + i) && (j <= limit); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
-	    double arith2 = ceil(arith);
+	    double arith2 = floor(arith);
 	    int pageNum = arith2;
 	    if (x[pageNum].refed == 0) {
 	      x[pageNum].refed = 1;
@@ -110,10 +108,10 @@ int wsstest(int pagesize, int windowsize) {
 	  //k -= windowsize;
 	  //loc = vs_array[k];
 	  loc = mem_head;
-	  for (j = i; (j < windowsize + i); j++) {
+	  for (j = i; (j <= windowsize + i) && (j <= limit); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
-	    double arith2 = ceil(arith);
+	    double arith2 = floor(arith);
 	    int pageNum = arith2;
 	    x[pageNum].refed = 0;
 	    loc = loc->next;
@@ -147,9 +145,7 @@ int wsstest(int pagesize, int windowsize) {
 	}*/
 	
 	// Calculate the average working set size
-	double avg1 = sum/totalSize;
-	double avg2 = floor(avg1);
-	int averageset = avg2;
+	int averageset = sum/totalSize;
 	
 	printf("WS Size: %d\n", averageset);
 	return 0;
