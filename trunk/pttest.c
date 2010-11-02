@@ -45,8 +45,6 @@ void pttest(int pagesize) {
     bitsPerLevel = (int)b;
     rootBits = 32 - offset - ((levels - 1) * bitsPerLevel);
 
-    //printf("offset: %d\nlevels: %d\nbitsPerLevel: %d\nrootBits: %d", (int)offset, levels, bitsPerLevel, rootBits);
-    
     // Create the root page table
     page_table *root = initializePageTable();
 
@@ -132,11 +130,14 @@ page_table *initializePageTable() {
     page_table *pt = (page_table *)malloc(sizeof(page_table));
     entry **entries = malloc(sizeof(entry*) * entriesPerTable);
     pt->entries = entries;
+    
+    // Use one physical frame to store the new page table.
     pt->frame_number = currentFrame;
     currentFrame++;
 
+    // Keep track of how many page tables have been created.
     tablesInUse++;
-    //printf("Creating page table\n");
+
     return pt;
 }
 
