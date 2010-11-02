@@ -98,7 +98,7 @@ int wsstest(int pagesize, int windowsize) {
 	  for (j = i; (j < windowsize + i); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
-	    double arith2 = floor(arith);
+	    double arith2 = ceil(arith);
 	    int pageNum = arith2;
 	    if (x[pageNum].refed == 0) {
 	      x[pageNum].refed = 1;
@@ -113,7 +113,7 @@ int wsstest(int pagesize, int windowsize) {
 	  for (j = i; (j < windowsize + i); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
-	    double arith2 = floor(arith);
+	    double arith2 = ceil(arith);
 	    int pageNum = arith2;
 	    x[pageNum].refed = 0;
 	    loc = loc->next;
