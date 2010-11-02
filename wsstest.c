@@ -64,8 +64,8 @@ int wsstest(int pagesize, int windowsize) {
 		loc = loc->next;
 	}
 	loc = mem_head;
-	int range = maxAddress - minAddress;
-	int numPages = range/(pagesize);
+
+	int numPages = (maxAddress - minAddress)/(pagesize);
 	
 	// Create unique virtual pages
 	struct page *x = (struct page*)malloc((sizeof(int))*numPages);
@@ -95,9 +95,9 @@ int wsstest(int pagesize, int windowsize) {
 	  //loc = vs_array[i];
 	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
-	    double n1 = currentAddress/range;
-	    double n2 = n1*numPages;
-	    int pageNum = floor(n2);
+	    double arith = (currentAddress - minAddress)/pagesize;
+	    double arith2 = floor(arith);
+	    int pageNum = arith2;
 	    if (x[pageNum].refed == 0) {
 	      x[pageNum].refed = 1;
 	      numRef++;
@@ -110,9 +110,9 @@ int wsstest(int pagesize, int windowsize) {
 	  loc = mem_head;
 	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
-	    double n1 = currentAddress/range;
-	    double n2 = n1*numPages;
-	    int pageNum = floor(n2);
+	    double arith = (currentAddress - minAddress)/pagesize;
+	    double arith2 = floor(arith);
+	    int pageNum = arith2;
 	    x[pageNum].refed = 0;
 	    loc = loc->next;
 	  }
