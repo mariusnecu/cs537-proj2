@@ -5,4 +5,4 @@ joiner, Richard Joiner
 ovanin, Zach Ovanin
 jcweiss, Jeremy Weiss
 
-Part 2 test with 500,000 entries takes longer than 20 seconds to run.
+Part 2 test with 500,000 entries takes longer than 20 seconds to run (about 30 seconds).
