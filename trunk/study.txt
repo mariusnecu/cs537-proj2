@@ -1,0 +1,23 @@
+1.) Name of program: echo; Parameter: hello
+2.) Total number of entries: 66,718
+3.) TLB misses with 4 KB pages and 100 TLB slots: 76
+	Total TLB misses with 64 KB pages and 100 TLB slots: 15
+4.) WS size is 11
+5.) 4 KB pages, number of pages being 12: 2528 Hard Page faults using fifo 
+    (not fifo2)
+	64 KB pages, number of pages being 12: 22 Hard Page faults using fifo 
+	(not fifo2)
+
+Reasoning
+-------------------------------------------------------------------------------
+Echo with one parameter has an astonishingly large number of entries for such
+a simple program.  With larger page sizes, the TLB can access a larger space
+of addresses.  Therefore, given any particular memory access there's a smaller
+chance of falling outside the TLB's addressable range.  With larger pages we 
+can take advantage of spatial locality; with a larger TLB size we observe 
+fewer TLB misses overall.  The page references over the time period of the 
+window reference the same pages frequently.  Therefore echo also exhibits 
+temporal locality as seen by the average working set size of 11 pages.
+Just as we saw using with the TLB, with a larger page size we observe fewer
+page faults, which was to be expected because of the memory addresses accessed
+by echo.
