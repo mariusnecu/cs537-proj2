@@ -1,3 +1,10 @@
+/* tlbtest.c
+ *
+ * Implements a Transfer-lookaside buffer to simulate
+ * the first step of virtual memory address translation.
+ *
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,6 +26,8 @@ void tlbtest(int tlbSize, int pageSize)
 	struct TLB* tlb = createTLB(tlbSize);
 	mem_loc *mem_ptr = mem_head;
 	
+	// Cycle through all memory addresses in the
+	// pin trace; insert into the TLB.
 	while (mem_ptr != NULL)
 	{	
         int vpn = mem_ptr->address >> offset;
@@ -31,6 +40,7 @@ void tlbtest(int tlbSize, int pageSize)
 	printf("VPNs: %d\n", vpnCount);	
 }
 
+// Allocate the TLB
 struct TLB* createTLB(int size)
 {
 	struct TLB* ptr = (struct TLB*)malloc(sizeof(struct TLB));
@@ -41,6 +51,7 @@ struct TLB* createTLB(int size)
 	return ptr;
 }
 
+// Create a Virtual Page Number with specified integer value.
 struct VPN* createVPN(int vpn)
 {
 	struct VPN* vpn_obj = (struct VPN*)malloc(sizeof(struct VPN));
@@ -55,12 +66,12 @@ struct VPN* createVPN(int vpn)
 	return vpn_obj;
 }
 
-// This function will do all of the heavy lifting for the TLB.
-// Specify which tlb the vpn should be inserted into, as well as
-// a counter (which should be called by reference) to keep track
-// of total misses in the tlb thus far.
+// Insert a virtual page number into a specified transfer-lookaside
+// buffer with a miss counter to increment if the VPN isn't in the TLB.
+// Implements LRU algorithm to decide on which VPN to evict from TLB.
 void insertIntoTLB(struct TLB* tlb, int vpn, int *rollingMiss)
 {
+	// Check if VPN is currently in the TLB.
 	int j;
 	for (j = 0; j<tlb->size; j++)
 	{   
@@ -118,6 +129,8 @@ void insertIntoTLB(struct TLB* tlb, int vpn, int *rollingMiss)
 
 }
 
+// Removes a VPN from passed evict list, returns the VPN that was
+// successfully removed, or NULL if nothing was.
 struct VPN* removeFromEvictList(struct evictList* eList, int vpn)
 {
     struct evictList *node = eList;
@@ -133,9 +146,11 @@ struct VPN* removeFromEvictList(struct evictList* eList, int vpn)
         }
         node = node->next;
     }
+	// No VPN match
     return NULL;
 }
 
+// Add to a specified eviction list.
 struct evictList* addToEvictList(struct evictList* eList, struct VPN* vpn_obj)
 {
     struct evictList *node = eList;
@@ -148,7 +163,8 @@ struct evictList* addToEvictList(struct evictList* eList, struct VPN* vpn_obj)
         }
         node = node->next;
     }
-    
+ 
+	// eList was null; allocate, store the VPN and return.
     eList = malloc(sizeof(struct evictList));
 	eList->arr = vpn_obj;
 	return eList;
