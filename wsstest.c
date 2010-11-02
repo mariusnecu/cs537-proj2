@@ -86,7 +86,7 @@ int wsstest(int pagesize, int windowsize) {
 	
 	// Take care of the edge case
 	if (windowsize > numAddresses) {
-		limit = numAddresses;
+		limit = numAddresses - 1;
 	} else {
 		limit = numAddresses - windowsize - 1;
 	}
@@ -95,7 +95,7 @@ int wsstest(int pagesize, int windowsize) {
 	for (i = 0; i <= limit; i++) {
 	  loc = mem_head;
 	  //loc = vs_array[i];
-	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
+	  for (j = i; (j < windowsize + i); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
 	    double arith2 = floor(arith);
@@ -110,7 +110,7 @@ int wsstest(int pagesize, int windowsize) {
 	  //k -= windowsize;
 	  //loc = vs_array[k];
 	  loc = mem_head;
-	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
+	  for (j = i; (j < windowsize + i); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
 	    double arith2 = floor(arith);
