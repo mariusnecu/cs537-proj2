@@ -96,7 +96,7 @@ int wsstest(int pagesize, int windowsize) {
 	for (i = 0; i <= limit; i++) {
 	  loc = mem_head;
 	  //loc = vs_array[i];
-	  for (j = i; (j <= windowsize + i) && (j <= limit); j++) {
+	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
 	    double arith2 = floor(arith);
@@ -111,7 +111,7 @@ int wsstest(int pagesize, int windowsize) {
 	  //k -= windowsize;
 	  //loc = vs_array[k];
 	  loc = mem_head;
-	  for (j = i; (j <= windowsize + i) && (j <= limit); j++) {
+	  for (j = i; (j < windowsize + i) && (j < limit); j++) {
 	    currentAddress = loc->address;
 	    double arith = (currentAddress - minAddress)/pagesize;
 	    double arith2 = floor(arith);
