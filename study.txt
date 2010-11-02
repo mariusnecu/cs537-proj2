@@ -1,7 +1,16 @@
 1.) Name of program: echo; Parameter: hello
 2.) Total number of entries: 66,718
-3.) TLB misses with 4 KB pages and 100 TLB slots: 76
-	Total TLB misses with 64 KB pages and 100 TLB slots: 15
+3.) TLB misses with 4 KB pages and 128 TLB slots: 76
+	Total space used with 4 KB pages: (128 TLB slots * 32 bits)/8 = 512 bytes
+	Evict List is empty since the TLB was never full.
+	
+	TLB misses with 64 KB pages and 128 TLB slots: 15
+	Total space used with 4 KB pages: (128 TLB slots * 32 bits)/8 = 512 bytes
+	Evict List is empty since the TLB was never full.
+	
+	The VPN is always stored as a 32 bit integer regardless on how big the
+	offset is based on the page size, hence the 32 bits.  Since the evict
+	list is empty, it occupies a minute amount of memory not worth mentioning.
 4.) WS size is 11
 5.) 4 KB pages, number of pages being 12: 2528 Hard Page faults using fifo 
     (not fifo2)
