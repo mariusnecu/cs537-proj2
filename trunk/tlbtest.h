@@ -1,3 +1,23 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Project 2 - Virtual Memory
+// Section 2
+//
+// Authors:
+//  Troy Cornell
+//  Richard Joiner
+//  Zach Ovanin
+//  Jeremy Weiss
+//
+// Files:
+//  prtest.c, prtest.h
+//  pttest.c, pttest.h
+//  tlbtest.c, tlbtest.h
+//  wsstest.c, wsstest.h
+//  vmsim.c, vmsim.h
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #ifndef TLBTEST_H_
 #define TLBTEST_H_
 
@@ -7,21 +27,21 @@
 
 struct TLB
 {
-	int size;
-	struct VPN** arr;
-	struct evictList* eList;
+  int size;
+  struct VPN** arr;
+  struct evictList* eList;
 };
 
 struct VPN
 {
-	int number;
-	int lastUsed;
+  int number;
+  int lastUsed;
 };
 
 struct evictList
 {
-    struct evictList *next;
-	struct VPN* arr;
+  struct evictList *next;
+  struct VPN* arr;
 };
 
 // Prototypes
