@@ -1,3 +1,23 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Project 2 - Virtual Memory
+// Section 2
+//
+// Authors:
+//  Troy Cornell
+//  Richard Joiner
+//  Zach Ovanin
+//  Jeremy Weiss
+//
+// Files:
+//  prtest.c, prtest.h
+//  pttest.c, pttest.h
+//  tlbtest.c, tlbtest.h
+//  wsstest.c, wsstest.h
+//  vmsim.c, vmsim.h
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -53,7 +73,7 @@ int fifoRemove(struct fifoQueue *elt, struct fifoQueue *queue) {
     return 0;
   }
 
-                                   //Head case
+  //Head case
   if(temp->value==elt->value) {
     //    printf("head modification\n");
     temp = queue;
@@ -61,7 +81,7 @@ int fifoRemove(struct fifoQueue *elt, struct fifoQueue *queue) {
     temp->next = NULL;
     return 1;
   }
-                                   //The rest
+  //The rest
   temp = temp->next;
   while(temp!=NULL) {
     if(temp->value==elt->value) {
@@ -93,7 +113,7 @@ struct fifoQueue* fifoAdd(struct fifoQueue *elt, struct fifoQueue *queue, int MA
   //    printf("%i!\n",temp->value);
   //    temp = temp->next;
   //  }
-//  temp = queue->next;
+  //  temp = queue->next;
   while(temp->next!=NULL) {
     next = temp->next;
     size++;
@@ -171,7 +191,7 @@ void prtest_2nd_fifo(int pagesize, int numframes) {
       if(fifoRemove(elt,queue)) {                                     // ==softfault
 	//	fprintf(TFILE, "VPN 0x%x soft fault\n",next->address>>offset);
 
-                                                               	      //Add end of firstFifo to secondFifo
+	//Add end of firstFifo to secondFifo
 	//	fprintf(TFILE, "VPN 0x%x moved to second chance queue\n",fifo[i]);
 	lastFirstFifo = fifo[i];
 	elt->value = lastFirstFifo;
@@ -237,19 +257,19 @@ void prtest_fifo(int pagesize, int numframes) {
   int found=0;
   //  FILE *tfile;
 
-                                                      //Initialize array
+  //Initialize array
   for(i=0;i<numframes;i++) {
     fifo[i] = 0;
     filled[i] = 0;
   }
 
-                                                      //Get list  
+  //Get list  
   head = mem_head;                                    //Access address list
   next = head;
   //  tfile = fopen("pr.trace","w");
   //  fprintf(tfile,"pagesize %i, frames %i\n", pagesize, numframes);
   
-                                                      //Enter list elts to fifo
+  //Enter list elts to fifo
   i=0;
   while(next!=NULL) {
     found=0;
