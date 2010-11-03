@@ -1,3 +1,23 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Project 2 - Virtual Memory
+// Section 2
+//
+// Authors:
+//  Troy Cornell
+//  Richard Joiner
+//  Zach Ovanin
+//  Jeremy Weiss
+//
+// Files:
+//  prtest.c, prtest.h
+//  pttest.c, pttest.h
+//  tlbtest.c, tlbtest.h
+//  wsstest.c, wsstest.h
+//  vmsim.c, vmsim.h
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #include<stdlib.h>
 #include<stdio.h>
 #include<math.h>
@@ -43,7 +63,7 @@ void wsstest(int pagesize, int windowsize) {
 
       if(window[i%windowsize]!=NULL
 	 && page(window[cmod]->address,pagesize)
-	    == page(window[i%windowsize]->address,pagesize)) {
+	 == page(window[i%windowsize]->address,pagesize)) {
 
 	same_as[cmod]=i;
 
@@ -53,9 +73,9 @@ void wsstest(int pagesize, int windowsize) {
       }
     }
 
-//    for(i=0;i<windowsize;i++) {
-//      fprintf(TRACE,"__%i\n",same_as[i]);
-//    }
+    //    for(i=0;i<windowsize;i++) {
+    //      fprintf(TRACE,"__%i\n",same_as[i]);
+    //    }
 
     //Calculate the window size
     if(c%2==1 && (c>windowsize || loc->next==NULL)) {
